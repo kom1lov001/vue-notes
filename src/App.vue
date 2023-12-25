@@ -4,11 +4,16 @@ import { ref } from "vue";
 let showModal = ref(false);
 let areatexts = ref("");
 let noteCase = ref([]);
+let errorMessage = ref("");
 
 function randomHsl() {
   return "hsla(" + Math.random() * 360 + ", 100%, 50%, 1)";
 }
-const newAddNote = () => {
+const addNote = () => {
+  if (areatexts.value.length <= 10) {
+    return (errorMessage.value =
+      "Note need to be 10 characters or more be Should!");
+  }
   noteCase.value.push({
     id: Math.floor(Math.random() * 1000000),
     text: areatexts.value,
@@ -19,7 +24,7 @@ const newAddNote = () => {
   areatexts.value = "";
 };
 // onMounted(() => {
-// console.log(newAddNote);
+// console.log(addNote);
 // }),
 </script>
 
@@ -33,9 +38,12 @@ const newAddNote = () => {
           id="note"
           cols="30"
           rows="10"
-          v-model="areatexts"
+          v-model.trim="areatexts"
         ></textarea>
-        <button @click="newAddNote">Add Notes</button>
+        <p v-if="errorMessage">
+          {{ errorMessage }}
+        </p>
+        <button @click="addNote">Add Notes</button>
         <button class="close" @click="showModal = !showModal">Close</button>
       </div>
     </div>
@@ -50,6 +58,7 @@ const newAddNote = () => {
         <div
           class="cardin"
           v-for="item of noteCase"
+          :key="item.id"
           :style="{ backgroundColor: item.backgroundColor }"
         >
           <p class="main-text">{{ item.text }}</p>
@@ -61,6 +70,9 @@ const newAddNote = () => {
 </template>
 
 <style>
+.modal p {
+  color: red;
+}
 * {
   margin: 0;
   padding: 0;
